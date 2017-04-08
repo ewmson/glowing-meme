@@ -80,6 +80,22 @@ def get_data():
                 storage.append({"index": index, "timestamp": "%s %s"%(parse[0],parse[1]), "tps": parse[3], "rd_sec/s": parse[4], "wr_sec/s": parse[5], "avgrq-sz": parse[6], "avgqu-sz": parse[7], "await": parse[8], "svctm": parse[9], "%util": parse[10]})
                 index += 1
 
+    # network
+    p = subprocess.Popen(["sar -n DEV -s %s"%start], shell=True, stdout=subprocess.PIPE)
+    outs, errs = p.communicate()
+
+    network = []
+    index = 0
+    ignore = 3
+    for line in outs.split('\n'):
+        if ignore > 0:
+            ignore -= 1
+        else:
+            parse = line.split()
+            if len(parse) == 10 and parse[2] == "eth0":
+                network.append({"index": index, "timestamp": "%s %s"%(parse[0],parse[1]), "interface": parse[2], "rxpck/s": parse[3], "txpck/s": parse[4], "rxkB/s": parse[5], "txkB/s": parse[6], "rxcmp/s": parse[7], "txcmp/s": parse[8], "rxmcst/s": parse[9]})
+                index += 1
+
     
 
 
@@ -97,7 +113,7 @@ def get_data():
     
     #storage = allinfo['disk_usage']
 
-    network = allinfo['get_net_io_counters']
+    #network = allinfo['get_net_io_counters']
 
     processes = allinfo['special_processes']
 
@@ -109,7 +125,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    #pprint.pprint(data['storage'])
+    #pprint.pprint(data['network'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
