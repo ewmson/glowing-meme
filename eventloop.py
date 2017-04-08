@@ -65,7 +65,22 @@ def get_data():
                 index += 1
 
     # disk usage
+    p = subprocess.Popen(["sar -d -s %s"%start], shell=True, stdout=subprocess.PIPE)
+    outs, errs = p.communicate()
 
+    storage = []
+    index = 0
+    ignore = 3
+    for line in outs.split('\n'):
+        if ignore > 0:
+            ignore -= 1
+        else:
+            parse = line.split()
+            if len(parse) == 11:
+                storage.append({"index": index, "timestamp": "%s %s"%(parse[0],parse[1]), "tps": parse[3], "rd_sec/s": parse[4], "wr_sec/s": parse[5], "avgrq-sz": parse[6], "avgqu-sz": parse[7], "await": parse[8], "svctm": parse[9], "%util": parse[10]})
+                index += 1
+
+    
 
 
 
@@ -80,7 +95,7 @@ def get_data():
 
     #mem = allinfo['get_mem_info']
     
-    storage = allinfo['disk_usage']
+    #storage = allinfo['disk_usage']
 
     network = allinfo['get_net_io_counters']
 
@@ -94,7 +109,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    pprint.pprint(data)
+    #pprint.pprint(data['storage'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
