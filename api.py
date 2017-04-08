@@ -38,3 +38,5 @@ def getAllInfo():
         "special_processes": getInfoAboutNamedProcesses(),
         "metadata": getMetaData()
     }
+
+print(getAllInfo())
