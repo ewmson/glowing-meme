@@ -6,37 +6,37 @@ metadata = get_instance_metadata()
 
 proc = {"mongod", "a.out", "python"}
 
-def getMetaData():
+def __get_meta_data():
     return metadata
 
-def getInfoAboutNamedProcesses():
+def __get_info_about_named_processes():
     processes = {}
     for p in psutil.process_iter():
         if p.name() in proc:
             processes[p.name()] = p.as_dict()
     return processes
 
-def getDiskUsage():
+def __get_disk_usage():
     total, used, free, percent = psutil.disk_usage('/')
     return {"total": total, "free": free, "used": used, "percent": percent}
 
 
-def getLoadAvg():
+def __getloadavg():
     (min1,min5,min10) = os.getloadavg()
     return {"1_min": min1, "5_min": min5, "10_min": min10}
 
 
-def getCpuCount():
+def __get_cpu_count():
     return {"num_cpu": os.cpu_count()}
 
 
 def getAllInfo():
     return {
-        "load_avg": getLoadAvg(),
-        "get_cpu_count": getCpuCount(),
-        "disk_usage": getDiskUsage(),
-        "special_processes": getInfoAboutNamedProcesses(),
-        "metadata": getMetaData()
+        "load_avg": __getloadavg(),
+        "get_cpu_count": __get_cpu_count(),
+        "disk_usage": __get_disk_usage(),
+        "special_processes": __get_info_about_named_processes(),
+        "metadata": __get_meta_data()
     }
-
-print(getAllInfo())
+if __name__ == "__main__":
+    print(getAllInfo())
