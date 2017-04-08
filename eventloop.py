@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 import datetime
 import requests
 import subprocess
@@ -50,11 +51,13 @@ def get_data():
 
 
 while True:
+    subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    pprint.pprint(data)
-    r = requests.post(url, data=data)
-    print(r.status_code)
+    #pprint.pprint(data)
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    #print(r.status_code)
     #print(r.json())
     time.sleep(10)
     
