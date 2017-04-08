@@ -12,9 +12,18 @@ from api import getAllInfo
 from sar import parser
 
 
+process_history = {}
+
+
 def get_data():
+    allinfo = getAllInfo()
     now = datetime.datetime.now()
     start = "%02d:%02d:%02d"%(now.hour-1,now.minute,now.second)
+
+    # meta
+    meta = allinfo['metadata']
+    meta['num_cpu'] = allinfo['get_cpu_count']
+    meta['os'] = sys.platform
 
     # loadavg
     p = subprocess.Popen(["sar -q -s %s"%start], shell=True, stdout=subprocess.PIPE)
@@ -96,26 +105,12 @@ def get_data():
                 network.append({"index": index, "timestamp": "%s %s"%(parse[0],parse[1]), "interface": parse[2], "rxpck/s": parse[3], "txpck/s": parse[4], "rxkB/s": parse[5], "txkB/s": parse[6], "rxcmp/s": parse[7], "txcmp/s": parse[8], "rxmcst/s": parse[9]})
                 index += 1
 
-    
+    # processes
+    #for p in allinfo['special_processes']:
+    processes = []
 
 
 
-    allinfo = getAllInfo()
-    #pprint.pprint(allinfo['get_mem_info'])
-
-    meta = allinfo['metadata']
-    meta['num_cpu'] = allinfo['get_cpu_count']
-
-    #cpu = {}
-    #cpu['load_avg'] = allinfo['load_avg']
-
-    #mem = allinfo['get_mem_info']
-    
-    #storage = allinfo['disk_usage']
-
-    #network = allinfo['get_net_io_counters']
-
-    processes = allinfo['special_processes']
 
     data = {"id": meta['instance-id'], "timestamp": time.time(), "meta": meta, "cpu": cpu, "mem": mem, "swap": swap, "storage": storage, "network": network, "processes": processes}
     return data
@@ -125,7 +120,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    #pprint.pprint(data['network'])
+    #pprint.pprint(data['meta'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
