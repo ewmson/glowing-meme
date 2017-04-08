@@ -50,7 +50,7 @@ def get_data():
 
 
 while True:
-    url = "https://stackcents.herokuapp.com/echo/"
+    url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
     pprint.pprint(data)
     r = requests.post(url, data=data)
