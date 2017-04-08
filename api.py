@@ -29,14 +29,16 @@ def __getloadavg():
 def __get_cpu_count():
     return {"num_cpu": psutil.cpu_count()}
 
-
+def __get_intance_id():
+    return metadata["instance-id"]
 def getAllInfo():
     return {
         "load_avg": __getloadavg(),
         "get_cpu_count": __get_cpu_count(),
         "disk_usage": __get_disk_usage(),
         "special_processes": __get_info_about_named_processes(),
-        "metadata": __get_meta_data()
+        "metadata": __get_meta_data(),
+        "instance_id": __get_intance_id()
     }
 if __name__ == "__main__":
     print(getAllInfo())
