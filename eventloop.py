@@ -13,8 +13,11 @@ from sar import parser
 
 
 def get_data():
+    now = datetime.datetime.now()
+    start = "%02d:%02d:%02d"%(now.hour-1,now.minute,now.second)
+
     # loadavg
-    p = subprocess.Popen(["sar -q"], shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen(["sar -q -s %s"%start], shell=True, stdout=subprocess.PIPE)
     outs, errs = p.communicate()
 
     cpu = []
@@ -30,7 +33,7 @@ def get_data():
                 index += 1
 
     # mem usage
-    p = subprocess.Popen(["sar -r"], shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen(["sar -r -s %s"%start], shell=True, stdout=subprocess.PIPE)
     outs, errs = p.communicate()
 
     mem = []
@@ -46,7 +49,7 @@ def get_data():
                 index += 1
 
     # swap space
-    p = subprocess.Popen(["sar -S"], shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen(["sar -S -s %s"%start], shell=True, stdout=subprocess.PIPE)
     outs, errs = p.communicate()
 
     swap = []
@@ -60,6 +63,8 @@ def get_data():
             if len(parse) == 7:
                 swap.append({"index": index, "timestamp": "%s %s"%(parse[0],parse[1]), "kbswpfree": parse[2], "kbswpused": parse[3], "%swpused": parse[4], "kbswpcad": parse[5], "%swpcad": parse[6]})
                 index += 1
+
+    # disk usage
 
 
 
@@ -89,7 +94,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    pprint.pprint(data['swap'])
+    pprint.pprint(data)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
