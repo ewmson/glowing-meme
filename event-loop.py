@@ -4,10 +4,11 @@ from api import getAllInfo
 
 while True:
     # TODO: call Eric's stuff and send to John's stuff
-    url = "http://httpbin.org/post"
+    url = "https://stackcents.herokuapp.com/echo/"
     data = getAllInfo()
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post(url, json=data, headers=headers)
-    # print r.status_code
-    # print r.json()
-    time.sleep(5)
+    #data = {"hello":"world"}
+    #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(url, data=data)
+    #print(r.status_code)
+    #print(r.json())
+    time.sleep(10)
