@@ -23,7 +23,7 @@ def get_data():
 
 
     allinfo = getAllInfo()
-    pprint.pprint(allinfo['get_mem_info'])
+    #pprint.pprint(allinfo['get_mem_info'])
 
     meta = allinfo['metadata']
     meta['num_cpu'] = allinfo['get_cpu_count']
@@ -39,14 +39,14 @@ def get_data():
 
     processes = allinfo['special_processes']
 
-    data = {"meta": meta, "cpu": cpu, "mem": mem, "storage": storage, "network": network, "processes": processes}
+    data = {"id": meta['instance-id'], "meta": meta, "cpu": cpu, "mem": mem, "storage": storage, "network": network, "processes": processes}
     return data
 
 
 while True:
     url = "https://stackcents.herokuapp.com/echo/"
     data = get_data()
-    pprint.pprint(data)
+    #pprint.pprint(data)
     r = requests.post(url, data=data)
     print(r.status_code)
     #print(r.json())

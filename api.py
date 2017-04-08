@@ -37,6 +37,9 @@ def __get_net_io_counters():
     return {"bytes_sent": bytes_sent, "bytes_recv": bytes_recv, "packets_sent": packets_sent, "packets_recv": packets_recv, "errin": errin, "errout": errout, "dropin": dropin, "dropout": dropout}
 
 
+def __get_intance_id():
+    return metadata["instance-id"]
+
 def getAllInfo():
     return {
         "load_avg": __getloadavg(),
@@ -45,7 +48,8 @@ def getAllInfo():
         "disk_usage": __get_disk_usage(),
         "get_net_io_counters": __get_net_io_counters(),
         "special_processes": __get_info_about_named_processes(),
-        "metadata": __get_meta_data()
+        "metadata": __get_meta_data(),
+        "instance_id": __get_intance_id()
     }
 
     
