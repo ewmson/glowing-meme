@@ -27,7 +27,7 @@ def __getloadavg():
 
 
 def __get_cpu_count():
-    return {"num_cpu": os.cpu_count()}
+    return {"num_cpu": psutil.cpu_count()}
 
 
 def getAllInfo():
