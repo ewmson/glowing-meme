@@ -6,7 +6,7 @@ from boto.utils import get_instance_metadata
 metadata = get_instance_metadata()
 metadata['uptime'] = time.time() - psutil.boot_time()
 
-proc = {"mongod", "a.out", "python"}
+proc = {"mongod", "a.out", "python", "postgres"}
 
 def __get_meta_data():
     return metadata
