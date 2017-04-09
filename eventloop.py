@@ -145,7 +145,8 @@ while True:
     data = get_data()
     #pprint.pprint(data['meta']['uptime'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post(url, data=json.dumps(data), headers=headers)
+    if len(data['cpu']) != 0 or len(data['mem']) != 0 or len(data['swap']) != 0 and len(data['storage']) != 0:
+        r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
     #print(r.json())
     time.sleep(10)
