@@ -12,7 +12,8 @@ from api import getAllInfo
 from sar import parser
 
 
-process_history = {}
+process_history = dict()
+max_history_length = 100
 
 
 def get_data():
@@ -106,10 +107,29 @@ def get_data():
                 index += 1
 
     # processes
-    #for p in allinfo['special_processes']:
+    global process_history
     processes = []
+    #print allinfo['special_processes']
+    for p in allinfo['special_processes']:
+        history = []
+        #print p
+        if p in process_history:
+            history = process_history[p]
+            if len(history) == max_history_length:
+                del history[0]
+                for x in range(0,len(history)):
+                    history[x]["index"] = x
+        
+        timestamp = "%02d:%02d:%02d"%(now.hour,now.minute,now.second)
+        allinfo['special_processes'][p]['timestamp'] = timestamp
+        allinfo['special_processes'][p]['index'] = len(history)
+        history.append(allinfo['special_processes'][p])
+        #pprint.pprint(history)
+        processes.append(history)
 
-
+    process_history = {}
+    for p in processes:
+        process_history[p[0]['pid']] = p
 
 
     data = {"id": meta['instance-id'], "timestamp": time.time(), "meta": meta, "cpu": cpu, "mem": mem, "swap": swap, "storage": storage, "network": network, "processes": processes}
@@ -120,7 +140,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    #pprint.pprint(data['meta'])
+    pprint.pprint(data['processes'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)

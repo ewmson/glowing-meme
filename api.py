@@ -13,7 +13,7 @@ def __get_info_about_named_processes():
     processes = {}
     for p in psutil.process_iter():
         if p.name() in proc:
-            processes[p.name()] = p.as_dict()
+            processes[str(p.pid)] = p.as_dict()
     return processes
 
 def __get_disk_usage():
