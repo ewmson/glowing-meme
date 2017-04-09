@@ -4,4 +4,4 @@ cd glowing-meme
 yum -y install gcc
 pip install -r requirements.txt
 pip install --upgrade requests
-python eventloop.py &
+nohup python eventloop.py </dev/null > hype.log 2>&1 &
