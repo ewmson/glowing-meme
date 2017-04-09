@@ -10,4 +10,4 @@ python swap.py 500 &
 python swap.py 500 &
 python swap.py 500 &
 python disk.py &
-python spin.py &
+#python spin.py &
