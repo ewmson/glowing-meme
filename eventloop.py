@@ -143,7 +143,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    pprint.pprint(data['disk'])
+    #pprint.pprint(data['meta']['uptime'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)

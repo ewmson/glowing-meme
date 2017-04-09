@@ -1,8 +1,10 @@
 import os
+import time
 import psutil
 from boto.utils import get_instance_metadata
 
 metadata = get_instance_metadata()
+metadata['uptime'] = time.time() - psutil.boot_time()
 
 proc = {"mongod", "a.out", "python"}
 
