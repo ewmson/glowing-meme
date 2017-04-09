@@ -19,7 +19,10 @@ max_history_length = 100
 def get_data():
     allinfo = getAllInfo()
     now = datetime.datetime.now()
-    start = "%02d:%02d:%02d"%(now.hour-1,now.minute,now.second)
+    if now.hour == 0:
+        start = "00:00:00"
+    else:
+        start = "%02d:%02d:%02d"%(now.hour-1,now.minute,now.second)
 
     # meta
     meta = allinfo['metadata']
@@ -75,6 +78,8 @@ def get_data():
                 index += 1
 
     # disk usage
+    disk = allinfo['disk_usage']
+
     p = subprocess.Popen(["sar -d -s %s"%start], shell=True, stdout=subprocess.PIPE)
     outs, errs = p.communicate()
 
@@ -109,11 +114,9 @@ def get_data():
     # processes
     global process_history
     processes = []
-    #print allinfo['special_processes']
-    for p in allinfo['special_processes']:
+    for pid in allinfo['special_processes']:
         history = []
-        #print p
-        if p in process_history:
+        if pid in process_history:
             history = process_history[p]
             if len(history) == max_history_length:
                 del history[0]
@@ -121,18 +124,18 @@ def get_data():
                     history[x]["index"] = x
         
         timestamp = "%02d:%02d:%02d"%(now.hour,now.minute,now.second)
-        allinfo['special_processes'][p]['timestamp'] = timestamp
-        allinfo['special_processes'][p]['index'] = len(history)
-        history.append(allinfo['special_processes'][p])
+        allinfo['special_processes'][pid]['timestamp'] = timestamp
+        allinfo['special_processes'][pid]['index'] = len(history)
+        history.append(allinfo['special_processes'][pid])
         #pprint.pprint(history)
         processes.append(history)
 
     process_history = {}
-    for p in processes:
-        process_history[p[0]['pid']] = p
+    for proc in processes:
+        process_history[proc[0]['pid']] = proc
 
 
-    data = {"id": meta['instance-id'], "timestamp": time.time(), "meta": meta, "cpu": cpu, "mem": mem, "swap": swap, "storage": storage, "network": network, "processes": processes}
+    data = {"id": meta['instance-id'], "timestamp": time.time(), "meta": meta, "cpu": cpu, "mem": mem, "swap": swap, "disk": disk, "storage": storage, "network": network, "processes": processes}
     return data
 
 
@@ -140,7 +143,7 @@ while True:
     subprocess.Popen(["/usr/lib64/sa/sa1", "1", "1"], shell=True, stdout=subprocess.PIPE)
     url = "https://stackcents.herokuapp.com/save_data/"
     data = get_data()
-    pprint.pprint(data['processes'])
+    pprint.pprint(data['disk'])
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     #print(r.status_code)
